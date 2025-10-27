@@ -2,6 +2,7 @@ import Navbar from "./_components/Navbar";
 import "./globals.css";
 import Footer from "./_components/Footer";
 import NextTopLoader from "nextjs-toploader";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata = {
   title: "Ecommerce",
@@ -15,10 +16,12 @@ export default function Layout({ children }) {
     <html lang="en">
       <head />
       <body>
-      <NextTopLoader showSpinner={false} />
+      <NextTopLoader showSpinner={false} color="lab(56 -45.31 16.82)" />
       <main className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         <Navbar />
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
         <Footer />
       </main>
       </body>

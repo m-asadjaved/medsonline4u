@@ -1,6 +1,6 @@
 // app/api/products/route.js
 import { NextResponse } from 'next/server';
-import { getPool } from '../../_lib/mysql'; // adjust path
+import { getPool } from '@/lib/mysql'; // adjust path
 
 export async function GET() {
   const pool = getPool();

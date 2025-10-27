@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 const Navbar = () => {
+
   return (
     <>      
     {/* NAV */}
@@ -34,7 +35,7 @@ const Navbar = () => {
           <div className="flex items-center gap-4">
             <button className="hidden sm:inline-block text-sm text-slate-600 hover:text-slate-800">Help</button>
             <button className="text-sm px-3 py-1 rounded-md border border-emerald-600 text-emerald-600">Sign in</button>
-            <button className="text-sm px-3 py-1 rounded-md bg-emerald-600 text-white">Cart</button>
+            <Link href="/cart" className="text-sm px-3 py-1 rounded-md bg-emerald-600 text-white">Cart</Link>
           </div>
         </div>
       </div>

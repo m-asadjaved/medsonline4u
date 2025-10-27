@@ -24,7 +24,7 @@ export default async function FeaturedProducts() {
               key={p.id}
               className="bg-white rounded-2xl shadow-sm overflow-hidden"
             >
-              <Link href={`products/${p.id}`}><Image
+              <Link href={`/products/${p.id}`}><Image
                 src={p.image_url}
                 alt={p.name}
                 className="h-auto w-full object-cover"
