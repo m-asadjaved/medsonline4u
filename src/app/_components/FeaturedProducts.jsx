@@ -18,7 +18,7 @@ export default async function FeaturedProducts() {
           <a className="text-sm text-emerald-600">View all</a>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {data.products.map((p) => (
             <article
               key={p.id}
@@ -27,13 +27,13 @@ export default async function FeaturedProducts() {
               <Link href={`products/${p.id}`}><Image
                 src={p.image_url}
                 alt={p.name}
-                className="h-auto w-full object-cover"
+                className="h-44 w-full object-cover"
                 width={500}
                 height={500}
               /></Link>
               <div className="p-4">
                 <h4 className="font-medium">{p.name}</h4>
-                <p className="text-xs text-slate-500 mt-1">{p.description}</p>
+                <p className="text-xs text-slate-500 mt-1">{p.short_description}</p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="text-lg font-semibold">${p.price}</div>
                   <div className="flex items-center gap-2">
