@@ -4,8 +4,10 @@ import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
+  const router = useRouter();
   const { cartItems, removeFromCart } = useCart();
   const [products, setProducts] = useState([]);
   const [coupon, setCoupon] = useState("");
@@ -101,39 +103,43 @@ export default function CartPage() {
                     key={`${item.id}-${item.variation?.id}`}
                     className="bg-white p-4 rounded-xl shadow-sm flex gap-4"
                   >
-                    <Link href={`/products/${item.id}`}><Image
-                      width={100}
-                      height={100}
-                      src={item.image}
-                      alt={item.name}
-                      className="h-24 w-24 object-cover rounded-md"
-                    />
+                    <Link href={`/products/${item.id}`}>
+                      <Image
+                        width={100}
+                        height={100}
+                        src={item.image}
+                        alt={item.name}
+                        className="h-24 w-24 object-cover rounded-md"
+                      />
                     </Link>
                     <div className="flex-1 flex flex-col">
                       <div className="flex items-start justify-between">
                         <Link href={`/products/${item.id}`}>
-                        <div>
-                          <div className="font-medium">{item.name}</div>
-                          {item.variation && (
+                          <div>
+                            <div className="font-medium">{item.name}</div>
+                            {item.variation && (
+                              <div className="text-xs text-slate-500 mt-1">
+                                Variation: {item.variation.name}
+                              </div>
+                            )}
                             <div className="text-xs text-slate-500 mt-1">
-                              Variation: {item.variation.name}
+                              Qty: {item.quantity}
                             </div>
-                          )}
-                          <div className="text-xs text-slate-500 mt-1">
-                            Qty: {item.quantity}
+                            <div className="text-xs text-slate-500 mt-1">
+                              Price: ${item.price}
+                            </div>
                           </div>
-                          <div className="text-xs text-slate-500 mt-1">
-                            Price: ${item.price}
-                          </div>
-                        </div>
                         </Link>
                         <div className="text-right">
                           <div className="font-semibold text-center">
-                            Total: ${(item.price * item.quantity).toLocaleString()}
+                            Total: $
+                            {(item.price * item.quantity).toLocaleString()}
                           </div>
                           <div className="mt-4 flex items-center justify-center">
                             <button
-                              onClick={() => handleRemove(item.id, item.variation?.id)}
+                              onClick={() =>
+                                handleRemove(item.id, item.variation?.id)
+                              }
                               className="bg-rose-500 text-sm text-white px-2 py-1 rounded hover:cursor-pointer"
                             >
                               Remove
@@ -197,12 +203,18 @@ export default function CartPage() {
 
               {/* Checkout */}
               <div className="mt-4">
-                <Link
-                  href="/checkout"
-                  className="block text-center px-4 py-3 rounded-md bg-emerald-600 text-white font-semibold"
+                <button
+                  onClick={() => router.push("/checkout")}
+                  disabled={products.length === 0 || loading}
+                  className={`block w-full text-center px-4 py-3 rounded-md font-semibold 
+                  ${
+                    products.length === 0 || loading
+                      ? "bg-gray-400 cursor-not-allowed text-white"
+                      : "bg-emerald-600 text-white hover:bg-emerald-700 cursor-pointer"
+                  }`}
                 >
                   Proceed to checkout
-                </Link>
+                </button>
               </div>
 
               <div className="mt-3 text-xs text-slate-500">

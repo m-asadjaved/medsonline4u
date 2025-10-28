@@ -11,11 +11,11 @@ export default async function FeaturedProducts() {
   return (
     <>
 
-      {/* FEATURED PRODUCTS */}
+      {/* RELATED PRODUCTS */}
       <section className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-10">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Featured products</h3>
-          <a className="text-sm text-emerald-600">View all</a>
+          <h3 className="text-xl font-semibold">Related products</h3>
+          <Link href={"/shop"} className="text-sm text-emerald-600">View all</Link>
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -30,7 +30,7 @@ export default async function FeaturedProducts() {
                 className="h-44 w-full object-cover"
                 width={500}
                 height={500}
-              /></Link>
+              />
               <div className="p-4">
                 <h4 className="font-medium">{p.name}</h4>
                 <p
@@ -40,19 +40,10 @@ export default async function FeaturedProducts() {
                   }}
                 ></p>
                 <div className="mt-4 flex items-center justify-between">
-                  <div className="text-lg font-semibold">${p.price}</div>
-                  <div className="flex items-center gap-2">
-                    <Link href={`/products/${p.id}`}>
-                      <button className="px-3 py-1 rounded-md border border-slate-200 text-sm">
-                        Details
-                      </button>
-                    </Link>
-                    <button className="px-3 py-1 rounded-md bg-emerald-600 text-white text-sm">
-                      Add
-                    </button>
-                  </div>
+                  <div className="text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
                 </div>
               </div>
+              </Link>
             </article>
           ))}
         </div>

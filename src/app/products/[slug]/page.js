@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import RelatedProducts from '../../_components/RelatedProducts';
-import ProductActions from "./ProductActions";
+import ProductActions from "./productActions";
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -19,29 +19,16 @@ export default async function ProductPage({ params }) {
     <>
       <main className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900">
         <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 md:gap-6 gap-0 p-6">
             {/* Images */}
             <div className="lg:col-span-6">
               <div className="bg-slate-100 rounded-xl p-4">
                 <Image width={500} height={500} src={product.image_url} alt={product.name} className="w-full h-80 md:h-[420px] object-contain rounded-md bg-white" />
-
-                <div className="mt-3 flex items-center gap-3 overflow-x-auto">
-                  {/* {product.images.map((img, idx) => (
-                  <button key={idx} className={`flex-shrink-0 rounded-md p-1 ${true === true ? 'ring-2 ring-emerald-500' : 'hover:opacity-80'}`}>
-                    <img src={img} alt={`thumb-${idx}`} className="h-16 w-16 object-cover rounded-md" />
-                  </button>
-                ))} */}
-                </div>
               </div>
 
               {/* Product details below images on mobile */}
               <div className="mt-6 lg:hidden p-3">
-                <h1 className="text-lg font-semibold">{product.name}</h1>
-                <div className="mt-2 flex items-center gap-3">
-                  <div className="text-2xl font-bold">${product.price}</div>
-                  <div className="text-sm text-slate-500 line-through">${product.mrp}</div>
-                  <div className="text-sm text-emerald-600">Save ${product.savings}</div>
-                </div>
+                <h1 className="text-2xl font-semibold">{product.name}</h1>
               </div>
             </div>
 

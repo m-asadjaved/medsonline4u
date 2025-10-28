@@ -1,6 +1,7 @@
 import React from "react";
 import FeaturedProducts from './_components/FeaturedProducts'
 import Categories from './_components/Categories'
+import Link from "next/link";
 
 export default function Home() {
 
@@ -15,8 +16,7 @@ export default function Home() {
             <p className="mt-4 text-slate-600 max-w-xl">Order prescription and OTC medicines online with verified pharmacists, easy refills, and discreet packaging. Same-day delivery in many cities.</p>
 
             <div className="mt-6 flex gap-3 flex-wrap">
-              <button className="px-5 py-3 rounded-md bg-emerald-600 text-white font-semibold shadow">Shop Medicines</button>
-              <button className="px-5 py-3 rounded-md border border-slate-300 text-slate-700">Upload Prescription</button>
+              <Link href="/shop" className="px-5 py-3 rounded-md bg-emerald-600 text-white font-semibold shadow">Shop Medicines</Link>
             </div>
 
             <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-slate-600">
@@ -49,7 +49,7 @@ export default function Home() {
               </ul>
 
               <div className="mt-2 w-full">
-                <button className="w-full px-4 py-3 rounded-lg bg-emerald-600 text-white font-semibold">Shop Now</button>
+                <Link href="/shop"><button className="w-full px-4 py-3 rounded-lg bg-emerald-600 text-white font-semibold cursor-pointer">Shop Now</button></Link>
               </div>
 
               <div className="w-full mt-3 grid grid-cols-3 gap-2 text-center text-xs text-slate-500">

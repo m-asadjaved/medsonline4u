@@ -10,15 +10,17 @@ export default function ProductActions({ productId, variations }) {
   const { addToCart } = useCart();
 
   // Compute price ranges
-  const variationPrices = variations.map(v => parseFloat(v.variation_price)).filter(p => p > 0);
-  const variationMrps = variations.map(v => parseFloat(v.variation_mrp));
+  const variationPrices = variations
+    .map((v) => parseFloat(v.variation_price))
+    .filter((p) => p > 0);
+  const variationMrps = variations.map((v) => parseFloat(v.variation_mrp));
   const minPrice = variationPrices.length ? Math.min(...variationPrices) : 0;
   const maxPrice = variationPrices.length ? Math.max(...variationPrices) : 0;
   const minMrp = Math.min(...variationMrps);
   const maxMrp = Math.max(...variationMrps);
 
-  const increase = () => setQuantity(q => q + 1);
-  const decrease = () => setQuantity(q => (q > 1 ? q - 1 : 1));
+  const increase = () => setQuantity((q) => q + 1);
+  const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
     if (!selectedVariation) return alert("Please select a variation first.");
@@ -39,21 +41,18 @@ export default function ProductActions({ productId, variations }) {
     selectedVariation && parseFloat(selectedVariation.variation_mrp).toFixed(2);
 
   return (
-    <div className="relative mt-4">
-      {/* ✅ Toast Alert */}
-      {addToCartAlert && (
-        <div className="absolute top-[-60px] right-0 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-md animate-fadeIn">
-          ✅ Added to cart! <Link href="/cart" className="border-b-2">View Cart</Link>
-        </div>
-      )}
-
+    <div className="relative md:mt-4 mt-0">
       {/* Price Section */}
-      <div className="my-3">
+      <div className="md:my-3 my-2 px-3 py-0">
         {selectedVariation ? (
           <div className="flex items-center gap-3">
-            <div className="text-3xl font-bold text-slate-900">${displayPrice}</div>
+            <div className="text-2xl font-bold text-slate-900">
+              ${displayPrice}
+            </div>
             {selectedVariation.variation_price > 0 && (
-              <div className="text-sm text-slate-500 line-through">${displayMrp}</div>
+              <div className="text-sm text-slate-500 line-through">
+                ${displayMrp}
+              </div>
             )}
           </div>
         ) : (
@@ -64,8 +63,8 @@ export default function ProductActions({ productId, variations }) {
       </div>
 
       {/* Variation Pills */}
-      <div className="flex flex-wrap gap-2">
-        {variations.map(v => (
+      <div className="flex flex-wrap gap-2 px-3 py-2">
+        {variations.map((v) => (
           <button
             key={v.id}
             onClick={() => setSelectedVariation(v)}
@@ -83,18 +82,33 @@ export default function ProductActions({ productId, variations }) {
       {/* Quantity + Actions */}
       <div className="mt-6 flex flex-col gap-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm text-slate-600">Qty</span>
-          <div className="flex items-center border rounded-md overflow-hidden">
-            <button onClick={decrease} className="px-3 py-2 text-sm hover:bg-slate-100">
+          <span className="text-md text-slate-600">Qty</span>
+          <div className="flex items-center border border-emerald-600 rounded-md overflow-hidden">
+            <button
+              onClick={decrease}
+              className="px-3 py-2 text-sm hover:bg-emerald-200"
+            >
               -
             </button>
             <div className="px-4 py-2 text-sm">{quantity}</div>
-            <button onClick={increase} className="px-3 py-2 text-sm hover:bg-slate-100">
+            <button
+              onClick={increase}
+              className="px-3 py-2 text-sm hover:bg-emerald-200"
+            >
               +
             </button>
           </div>
-          <div className="text-sm text-slate-600">⭐ 5 reviews</div>
         </div>
+
+        {/* ✅ Toast Alert */}
+        {addToCartAlert && (
+          <div className="md:absolute md:top-[-95px] right-0 bg-emerald-600 text-white px-4 mx-0 py-2 rounded-lg shadow-md animate-fadeIn">
+            ✅ Added to cart!{" "}
+            <Link href="/cart" className="border-b-2">
+              View Cart
+            </Link>
+          </div>
+        )}
 
         <div className="flex gap-3">
           <button

@@ -15,10 +15,10 @@ export default async function FeaturedProducts() {
       <section className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-10">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-semibold">Featured products</h3>
-          <a className="text-sm text-emerald-600">View all</a>
+          <Link href={'/shop'} className="text-sm text-emerald-600">View all</Link>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {data.products.map((p) => (
             <article
               key={p.id}
@@ -40,7 +40,7 @@ export default async function FeaturedProducts() {
                   }}
                 ></p>
                 <div className="mt-4 flex items-center justify-between">
-                  <div className="text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
+                  <div className="text-sm md:text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
                 </div>
               </div>
               </Link>
