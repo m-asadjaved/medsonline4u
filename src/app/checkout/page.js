@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [cartItems, setCartItems] = useState([]);
   const [form, setForm] = useState({
     fullName: "",
@@ -25,7 +27,11 @@ export default function CheckoutPage() {
   // Fetch product data based on IDs in localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    if (storedCart.length === 0) return;
+    if (storedCart.length === 0) {
+      alert('Please add items to cart first.')
+      router.push("/shop");
+      return;
+    }
 
     fetch("/api/products/cart", {
       method: "POST",
@@ -45,7 +51,7 @@ export default function CheckoutPage() {
   }, []);
 
   const subtotal = useMemo(
-    () => cartItems.reduce((s, it) => s + it.price * it.qty, 0),
+    () => cartItems.reduce((s, it) => s + it.variation.price * it.quantity, 0),
     [cartItems]
   );
   const shippingCost = form.shippingMethod === "standard" ? 49 : 149;
@@ -145,7 +151,7 @@ export default function CheckoutPage() {
                           }
                         />{" "}
                         <span className="ml-2">
-                          Standard (1-3 days) - ₹49
+                          Standard (1-3 days) - $49
                         </span>
                       </label>
                       <label
@@ -164,7 +170,7 @@ export default function CheckoutPage() {
                           }
                         />{" "}
                         <span className="ml-2">
-                          Express (same day) - ₹149
+                          Express (same day) - $149
                         </span>
                       </label>
                     </div>
@@ -196,10 +202,10 @@ export default function CheckoutPage() {
                   </div>
                 ) : (
                   cartItems.map((it) => (
-                    <div key={it.id} className="flex items-center justify-between">
+                    <div key={`${it.id}-${it.variation.id}`} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Image
-                          src={it.image_url}
+                          src={it.image}
                           className="h-10 w-10 object-cover rounded-md"
                           width={40}
                           height={40}
@@ -208,26 +214,32 @@ export default function CheckoutPage() {
                         <div>
                           <div className="text-sm">{it.name}</div>
                           <div className="text-xs text-slate-500">
-                            Qty {it.qty}
+                            Qty: {it.quantity}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            Pills: {it.variation.name}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            Price: ${it.price}
                           </div>
                         </div>
                       </div>
-                      <div className="font-medium">₹{it.price * it.qty}</div>
+                      <div className="font-medium">${it.total * it.qty}</div>
                     </div>
                   ))
                 )}
 
                 <div className="border-t pt-3 flex justify-between">
                   <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
+                  <span>${subtotal}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>₹{shippingCost}</span>
+                  <span>${shippingCost}</span>
                 </div>
                 <div className="border-t pt-3 font-semibold flex justify-between">
                   <span>Total</span>
-                  <span>₹{total}</span>
+                  <span>${total}</span>
                 </div>
               </div>
             </div>

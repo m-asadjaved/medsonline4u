@@ -25,7 +25,7 @@ const Navbar = () => {
             <Link href="/contact" className="text-sm text-slate-600 hover:text-slate-900">Contact</Link>
           </nav>
 
-          <div className="flex-1 mx-6 max-w-[20rem]">
+          <div className="flex-1 mx-6 max-w-[20rem] items-end">
             <div className="hidden md:flex items-center bg-slate-100 rounded-lg px-3 py-2 gap-3">
               <input aria-label="search" className="flex-1 bg-transparent outline-none text-sm" placeholder="Search medicines, brands or symptoms" />
               <button className="text-sm px-3 py-1 rounded-md bg-emerald-600 text-white font-medium">Search</button>
@@ -33,8 +33,6 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="hidden sm:inline-block text-sm text-slate-600 hover:text-slate-800">Help</button>
-            <button className="text-sm px-3 py-1 rounded-md border border-emerald-600 text-emerald-600">Sign in</button>
             <Link href="/cart" className="text-sm px-3 py-1 rounded-md bg-emerald-600 text-white">Cart</Link>
           </div>
         </div>

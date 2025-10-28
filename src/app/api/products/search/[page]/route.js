@@ -1,0 +1,28 @@
+// app/api/products/route.js
+import { NextResponse } from 'next/server';
+import { getPool } from '@/lib/mysql'; // adjust path
+
+export async function GET(req, { params }) {
+  const { page } = await params;
+
+  if (!page) return NextResponse.json({ error: 'Invalid page' }, { status: 400 });
+  const pool = getPool();
+  const [rows] = await pool.query(
+    `SELECT 
+      p.*,
+      MIN(v.variation_mrp) AS min_price,
+      MAX(v.variation_mrp) AS max_price,
+      c.name AS category
+    FROM products p
+    LEFT JOIN product_variations v ON v.product_id = p.id
+    LEFT JOIN categories c ON c.id = p.category_id
+    GROUP BY p.id
+    ORDER BY id DESC limit 9 offset ${(page-1) * 9}`
+  );
+
+  const [totalRows] = await pool.query(
+    `SELECT count(id) as total_products FROM products`
+  );
+
+  return NextResponse.json({ products: rows, totalRows: totalRows[0].total_products});
+}

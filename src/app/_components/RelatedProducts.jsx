@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function FeaturedProducts() {
   const baseUrl = process.env.BASE_URL;
-  const res = await fetch(`${baseUrl}/api/products`, { cache: "no-store"});
+  const res = await fetch(`${baseUrl}/api/products`, { cache: "no-store" });
   const data = await res.json();
 
   return (
@@ -27,13 +27,18 @@ export default async function FeaturedProducts() {
               <Link href={`/products/${p.id}`}><Image
                 src={p.image_url}
                 alt={p.name}
-                className="h-auto w-full object-cover"
+                className="h-44 w-full object-cover"
                 width={500}
                 height={500}
               /></Link>
               <div className="p-4">
                 <h4 className="font-medium">{p.name}</h4>
-                <p className="text-xs text-slate-500 mt-1">{p.description}</p>
+                <p
+                  className="text-xs text-slate-500 mt-1"
+                  dangerouslySetInnerHTML={{
+                    __html: `${p.short_description.slice(0, 100)}...`,
+                  }}
+                ></p>
                 <div className="mt-4 flex items-center justify-between">
                   <div className="text-lg font-semibold">${p.price}</div>
                   <div className="flex items-center gap-2">
