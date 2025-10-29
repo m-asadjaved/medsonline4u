@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import slugify from 'slugify';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function FeaturedProducts() {
               key={p.id}
               className="bg-white rounded-2xl shadow-sm overflow-hidden"
             >
-              <Link href={`/products/${p.id}`}><Image
+              <Link href={`/products/${p.id}?${slugify(p.name)}`}><Image
                 src={p.image_url}
                 alt={p.name}
                 className="h-44 w-full object-cover"

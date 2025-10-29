@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProductActions({ productId, variations }) {
+  const router = useRouter();
   const [selectedVariation, setSelectedVariation] = useState(variations[0]);
   const [addToCartAlert, setAddToCartAlert] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -27,6 +29,12 @@ export default function ProductActions({ productId, variations }) {
     addToCart(productId, selectedVariation.id, quantity);
     setAddToCartAlert(true);
     setTimeout(() => setAddToCartAlert(false), 2500);
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedVariation) return alert("Please select a variation first.");
+    addToCart(productId, selectedVariation.id, quantity);
+    router.push("/checkout");
   };
 
   const displayPrice = selectedVariation
@@ -124,6 +132,7 @@ export default function ProductActions({ productId, variations }) {
           </button>
 
           <button
+            onClick={handleBuyNow}
             disabled={!selectedVariation}
             className={`hover:cursor-pointer px-4 py-3 rounded-lg border font-semibold transition ${
               selectedVariation

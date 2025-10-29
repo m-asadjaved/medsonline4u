@@ -1,4 +1,5 @@
 import Link from "next/link";
+import slugify from 'slugify';
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function FeaturedProducts() {
         <h3 className="text-xl font-semibold">Browse by category</h3>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
           {data.categories.map((c) => (
-            <Link href={`/shop?category=${c.id}`} key={c.id}>
+            <Link href={`/shop?category=${c.id}?${slugify(c.name)}`} key={c.id}>
               <div className="bg-white p-3 rounded-lg text-center shadow-sm hover:shadow-md transition">
                 <div className="h-12 w-12 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-xl">
                   💊
