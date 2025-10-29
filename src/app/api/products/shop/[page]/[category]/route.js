@@ -1,13 +1,21 @@
 // app/api/products/route.js
 import { NextResponse } from "next/server";
 import { getPool } from "@/lib/mysql";
+import { redis } from "@/lib/redis";
 
 export async function GET(req, { params }) {
   try {
     const { page, category } = await params;
 
-    if (page < 1) {
-      return NextResponse.json({ error: "Invalid page number" }, { status: 400 });
+    if (page < 1 || !category) {
+      return NextResponse.json({ error: "Invalid page number or category" }, { status: 400 });
+    }
+
+    // ✅ Try Redis cache first
+    const cachedCategory = await redis.json.get("category:" + category + ":page:" + page);
+
+    if (cachedCategory) {
+      return NextResponse.json(cachedCategory);
     }
 
     const pool = getPool();
@@ -16,7 +24,10 @@ export async function GET(req, { params }) {
 
     const baseQuery = `
       SELECT 
-        p.*,
+        p.id,
+        p.name,
+        p.short_description,
+        p.image_url,
         MIN(v.variation_mrp) AS min_price,
         MAX(v.variation_mrp) AS max_price,
         c.name AS category
@@ -35,6 +46,13 @@ export async function GET(req, { params }) {
       `SELECT COUNT(id) AS total_products FROM products ${category ? "WHERE category_id = ?" : ""}`,
       category ? [category] : []
     );
+
+    await redis.json.set("category:" + category + ":page:" + page, "$", {
+      products: rows,
+      totalRows: totalRows[0].total_products,
+      page,
+      category,
+    });
 
     return NextResponse.json({
       products: rows,

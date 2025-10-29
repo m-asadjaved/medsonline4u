@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getPool } from '@/lib/mysql'; // adjust path
 import { getUserIp } from '@/lib/ip';
 import { rateLimiter } from '@/lib/limiter';
+import { redis } from '@/lib/redis';
 
 export async function GET() {
 
@@ -12,6 +13,13 @@ export async function GET() {
     await rateLimiter.consume(userIp, 1);
   } catch {
     return NextResponse.json({ message: 'Too many requests' }, { status: 429 })
+  }
+
+  // ✅ Try Redis cache first
+  const cachedData = await redis.json.get("featuredProducts");
+
+  if (cachedData) {
+    return NextResponse.json(cachedData);
   }
 
   const pool = getPool();
@@ -30,6 +38,7 @@ export async function GET() {
    LIMIT 6`
   );
 
+  await redis.json.set("featuredProducts", "$", { products: rows });
 
   return NextResponse.json({ products: rows });
 }

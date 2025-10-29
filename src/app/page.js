@@ -41,7 +41,7 @@ export default function Home() {
 
           <div className="order-first lg:order-last">
             <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col items-start gap-4">
-              <h3 className="text-lg font-semibold">Why choose MediKart?</h3>
+              <h3 className="text-lg font-semibold">Why choose MedsOnline4u?</h3>
               <ul className="text-sm text-slate-600 space-y-2">
                 <li>• Verified, genuine medicines</li>
                 <li>• Fast, discreet delivery</li>
