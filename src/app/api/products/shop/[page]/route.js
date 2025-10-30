@@ -20,6 +20,7 @@ export async function GET(req, { params }) {
     `SELECT 
       p.id,
       p.name,
+      p.slug,
       p.short_description,
       p.image_url,
       MIN(v.variation_mrp) AS min_price,

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
-import { EmailTemplate } from "@/app/_components/EmailTemplate";
+import { EmailTemplate } from "@/app/(home)/_components/EmailTemplate";
 const resend = new Resend(process.env.RESEND_KEY);
 
 export async function POST(req) {

@@ -4,28 +4,30 @@ import slugify from 'slugify';
 
 export const dynamic = 'force-dynamic';
 
-export default async function FeaturedProducts() {
+export default async function FeaturedProducts({ productId = null, category = null }) {
   const baseUrl = process.env.BASE_URL;
-  const res = await fetch(`${baseUrl}/api/products`, { cache: "no-store" });
+  const url = category ? `${baseUrl}/api/products/shop/1/${category}` : `${baseUrl}/api/products`;
+  const res = await fetch(url, { cache: "no-store" });
   const data = await res.json();
 
   return (
     <>
 
-      {/* FEATURED PRODUCTS */}
+      {/* RELATED PRODUCTS */}
       <section className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-10">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Featured products</h3>
-          <Link href={'/shop'} className="text-sm text-emerald-600">View all</Link>
+          <h3 className="text-xl font-semibold">Related products</h3>
+          <Link href={"/shop"} className="text-sm text-emerald-600">View all</Link>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {data.products.map((p) => (
+            productId === p.id ? '' : (
             <article
               key={p.id}
               className="bg-white rounded-2xl shadow-sm overflow-hidden"
             >
-              <Link href={`products/${p.id}?${slugify(p.name)}`}><Image
+              <Link href={`/products/${slugify(p.slug)}`}><Image
                 src={p.image_url}
                 alt={p.name}
                 className="h-44 w-full object-cover"
@@ -41,11 +43,12 @@ export default async function FeaturedProducts() {
                   }}
                 ></p>
                 <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm md:text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
+                  <div className="text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
                 </div>
               </div>
               </Link>
             </article>
+            )
           ))}
         </div>
       </section>

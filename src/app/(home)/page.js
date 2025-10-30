@@ -1,6 +1,6 @@
 import React from "react";
-import FeaturedProducts from './_components/FeaturedProducts'
-import Categories from './_components/Categories'
+import FeaturedProducts from '@/app/(home)/_components/FeaturedProducts'
+import Categories from '@/app/(home)/_components/Categories'
 import Link from "next/link";
 
 export default function Home() {

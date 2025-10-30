@@ -146,7 +146,7 @@ export default function ShopPage() {
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {!loading && products.map(p => (
                 <article key={p.id} className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-                  <Link href={`/products/${p.id}?${slugify(p.name)}`}><Image src={p.image_url} alt={p.name} className="h-40 w-full object-cover" width={500} height={500} />
+                  <Link href={`/products/${slugify(p.slug)}`}><Image src={p.image_url} alt={p.name} className="h-40 w-full object-cover" width={500} height={500} />
                     <div className="p-4 flex-1 flex flex-col">
                       <div className="flex items-start justify-between">
                         <div>

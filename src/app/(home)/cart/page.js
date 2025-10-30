@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const router = useRouter();
-  const { cartItems, removeFromCart } = useCart();
+  const { removeFromCart } = useCart();
   const [products, setProducts] = useState([]);
   const [coupon, setCoupon] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -105,7 +105,7 @@ export default function CartPage() {
                     key={`${item.id}-${item.variation?.id}`}
                     className="bg-white p-4 rounded-xl shadow-sm flex gap-4"
                   >
-                    <Link href={`/products/${item.id}`}>
+                    <Link href={`/products/${item.slug}`}>
                       <Image
                         width={100}
                         height={100}
@@ -116,7 +116,7 @@ export default function CartPage() {
                     </Link>
                     <div className="flex-1 flex flex-col">
                       <div className="flex items-start justify-between">
-                        <Link href={`/products/${item.id}`}>
+                        <Link href={`/products/${item.slug}`}>
                           <div>
                             <div className="font-medium">{item.name}</div>
                             {item.variation && (

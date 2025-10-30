@@ -78,7 +78,7 @@ export default async function ProductPage({ params }) {
         <div className="max-w-6xl mx-auto text-center text-xs text-slate-500 mt-6">*Delivery time varies by location</div>
       </main>
 
-      <RelatedProducts />
+      <RelatedProducts productId={product.id} category={product.category_id} />
     </>
   );
 }

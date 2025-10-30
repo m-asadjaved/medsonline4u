@@ -25,7 +25,7 @@ export async function POST(req) {
   // --- Fetch products ---
   const productPlaceholders = productIds.map(() => "?").join(",");
   const [products] = await pool.query(
-    `SELECT id, name, image_url, short_description, price FROM products WHERE id IN (${productPlaceholders})`,
+    `SELECT id, name, slug, image_url, price FROM products WHERE id IN (${productPlaceholders})`,
     productIds
   );
 
@@ -54,6 +54,7 @@ export async function POST(req) {
     return {
       id: product?.id,
       name: product?.name,
+      slug: product?.slug,
       image: product?.image_url,
       description: product?.short_description,
       quantity: item.quantity || 1,

@@ -3,6 +3,7 @@ import "./globals.css";
 import Footer from "./_components/Footer";
 import NextTopLoader from "nextjs-toploader";
 import { CartProvider } from "@/context/CartContext";
+import WhatsappButton from "@/app/(home)/_components/WhatsappButton";
 import Script from "next/script";
 
 export const metadata = {
@@ -33,6 +34,7 @@ export default function Layout({ children }) {
         <main className="min-h-screen bg-slate-50 text-slate-900 antialiased">
           <Navbar />
           <CartProvider>{children}</CartProvider>
+          <WhatsappButton />
           <Footer />
         </main>
       </body>
