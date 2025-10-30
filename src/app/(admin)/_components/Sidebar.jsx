@@ -1,51 +1,46 @@
-import React from 'react'
-import Link from 'next/link'
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-const Sidebar = () => {
-    return (
-        <>
-            {/* Sidebar */}
-            <aside className="w-64 bg-slate-800 shadow-lg fixed inset-y-0 left-0">
-                <div className="px-6 py-4 border-b">
-                    <h2 className="text-2xl font-bold text-blue-600">Admin</h2>
-                    <p className="text-sm text-gray-500">MedsOnline4u</p>
-                </div>
-
-                <nav className="p-4 space-y-2">
-                    <Link
-                        href="/admin"
-                        className="block py-2 px-3 rounded hover:bg-slate-900 transition"
-                    >
-                        Dashboard
-                    </Link>
-                    <Link
-                        href="/admin/products"
-                        className="block py-2 px-3 rounded hover:bg-slate-900 transition"
-                    >
-                        Products
-                    </Link>
-                    <Link
-                        href="/admin/orders"
-                        className="block py-2 px-3 rounded hover:bg-slate-900 transition"
-                    >
-                        Orders
-                    </Link>
-                    <Link
-                        href="/admin/customers"
-                        className="block py-2 px-3 rounded hover:bg-slate-900 transition"
-                    >
-                        Customers
-                    </Link>
-                    <Link
-                        href="/admin/settings"
-                        className="block py-2 px-3 rounded hover:bg-slate-900 transition"
-                    >
-                        Settings
-                    </Link>
-                </nav>
-            </aside>
-        </>
-    )
+export default function Page({ children }) {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header
+          className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/admin">
+                  Dashboard
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {children}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
-
-export default Sidebar
