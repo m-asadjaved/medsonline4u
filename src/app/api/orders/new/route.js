@@ -8,10 +8,12 @@ export async function POST(req) {
 
     const { data, error } = await resend.emails.send({
         from: 'Medsonline4U <orders@medsonline4u.com>',
+        // to: ['flyquill.pk@gmail.com'],
         to: ['flyquill.pk@gmail.com', 'rockharoon8200@gmail.com'],
         subject: 'New Order',
         react: EmailTemplate({
             orderId: formData.orderId,
+            email: formData.email,
             name: formData.name,
             address: formData.address,
             phone: formData.phone,

@@ -12,6 +12,7 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState([]);
   const [form, setForm] = useState({
     fullName: "",
+    email: "",
     phone: "",
     address1: "",
     address2: "",
@@ -27,12 +28,21 @@ export default function CheckoutPage() {
     paymentMethod: "bank",
   });
   const [step, setStep] = useState(1);
+  const requiredFields = [
+    "fullName",
+    "email",
+    "phone",
+    "address1",
+    "city",
+    "state",
+    "pincode",
+  ];
 
   // Fetch product data based on IDs in localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     if (storedCart.length === 0) {
-      alert('Please add items to cart first.')
+      alert("Please add items to cart first.");
       router.push("/shop");
       return;
     }
@@ -58,7 +68,7 @@ export default function CheckoutPage() {
     () => cartItems.reduce((s, it) => s + it.variation.price * it.quantity, 0),
     [cartItems]
   );
-  const shippingCost = form.shippingMethod === "standard" ? 30 : 80;
+  const shippingCost = form.shippingMethod === "standard" ? 30 : 100;
   const total = subtotal + shippingCost;
 
   function updateField(k, v) {
@@ -71,24 +81,33 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Validate required fields
+    const missing = requiredFields.filter((f) => !form[f]?.trim());
+    if (missing.length > 0) {
+      alert(`Please fill in all required fields:\n${missing.join(", ")}`);
+      return;
+    }
+
     setLoading(true);
 
     const reqBody = {
       orderId: `ORD-${Date.now()}`,
       name: form.fullName,
+      email: form.email,
       address: `${form.address1}, ${form.address2}`,
       phone: form.phone,
       city: form.city,
       state: form.state,
       pincode: form.pincode,
-      shippingMethod: form.shippingMethod === "standard" ? "Standard" : "Express",
+      shippingMethod:
+        form.shippingMethod === "standard" ? "Standard" : "Express",
       total: total,
       items: cartItems.map((it) => ({
         name: it.name,
         variation: it.variation?.name || it.variation,
         qty: it.qty,
-        total: it.qty * it.price
-      }))
+        total: it.qty * it.price,
+      })),
     };
 
     console.log("🚀 Sending Order:", reqBody);
@@ -106,11 +125,10 @@ export default function CheckoutPage() {
       if (!res.ok) throw new Error(data.error || "Failed to submit order");
 
       // ✅ Clear cart after successful order
-      cartItems.forEach(it => removeFromCart(it.id, it.variation.id));
+      cartItems.forEach((it) => removeFromCart(it.id, it.variation.id));
       localStorage.removeItem("cart");
 
       setStep(2);
-
     } catch (err) {
       console.error("❌ Order submission failed:", err);
       alert("Failed to place order. Try again.");
@@ -118,9 +136,10 @@ export default function CheckoutPage() {
     setLoading(false);
   }
 
-
   return (
-    <main className={`${step === 1 ? 'min-h-screen' : ''}  bg-slate-50 p-4 md:p-8 text-slate-900`}>
+    <main
+      className={`${step === 1 ? "min-h-screen" : ""}  bg-slate-50 p-4 md:p-8 text-slate-900`}
+    >
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-semibold">Checkout</h1>
         {loading && (
@@ -140,6 +159,7 @@ export default function CheckoutPage() {
 
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                   <input
+                    required={true}
                     value={form.fullName}
                     onChange={(e) => updateField("fullName", e.target.value)}
                     placeholder="Full name"
@@ -151,6 +171,13 @@ export default function CheckoutPage() {
                     placeholder="Phone"
                     className="px-3 py-2 rounded-md border"
                   />
+                  <input
+                    value={form.email}
+                    onChange={(e) => updateField("email", e.target.value)}
+                    placeholder="Email Address"
+                    className="md:col-span-2 px-3 py-2 rounded-md border"
+                    type="email"
+                  />                  
                   <input
                     value={form.address1}
                     onChange={(e) => updateField("address1", e.target.value)}
@@ -186,10 +213,11 @@ export default function CheckoutPage() {
                     <div className="text-sm font-medium">Shipping method</div>
                     <div className="mt-2 flex gap-2">
                       <label
-                        className={`flex-1 p-3 border rounded-md ${form.shippingMethod === "standard"
-                          ? "ring-2 ring-emerald-500"
-                          : ""
-                          }`}
+                        className={`flex-1 p-3 border rounded-md ${
+                          form.shippingMethod === "standard"
+                            ? "ring-2 ring-emerald-500"
+                            : ""
+                        }`}
                       >
                         <input
                           type="radio"
@@ -199,15 +227,14 @@ export default function CheckoutPage() {
                             updateField("shippingMethod", "standard")
                           }
                         />{" "}
-                        <span className="ml-2">
-                          Standard (1-3 days) - $49
-                        </span>
+                        <span className="ml-2">Standard (3-5 days) - $30</span>
                       </label>
                       <label
-                        className={`flex-1 p-3 border rounded-md ${form.shippingMethod === "express"
-                          ? "ring-2 ring-emerald-500"
-                          : ""
-                          }`}
+                        className={`flex-1 p-3 border rounded-md ${
+                          form.shippingMethod === "express"
+                            ? "ring-2 ring-emerald-500"
+                            : ""
+                        }`}
                       >
                         <input
                           type="radio"
@@ -217,9 +244,7 @@ export default function CheckoutPage() {
                             updateField("shippingMethod", "express")
                           }
                         />{" "}
-                        <span className="ml-2">
-                          Express (same day) - $149
-                        </span>
+                        <span className="ml-2">Express (same day) - $100</span>
                       </label>
                     </div>
                   </div>
@@ -233,7 +258,6 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                 </div>
-
 
                 {/* STEP 2 & 3 remain the same as your current code */}
               </div>
@@ -250,7 +274,10 @@ export default function CheckoutPage() {
                     </div>
                   ) : (
                     cartItems.map((it) => (
-                      <div key={`${it.id}-${it.variation.id}`} className="flex items-center justify-between">
+                      <div
+                        key={`${it.id}-${it.variation.id}`}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex items-center gap-3">
                           <Image
                             src={it.image}
@@ -293,8 +320,11 @@ export default function CheckoutPage() {
               </div>
               <label
                 htmlFor="bank"
-                className={`cursor-pointer bg-white p-4 mt-2 rounded-xl shadow-sm flex items-center gap-3 ${form.paymentMethod === "bank" ? "ring-1 ring-emerald-600 bg-emerald-50" : ""
-                  }`}
+                className={`cursor-pointer bg-white p-4 mt-2 rounded-xl shadow-sm flex items-center gap-3 ${
+                  form.paymentMethod === "bank"
+                    ? "ring-1 ring-emerald-600 bg-emerald-50"
+                    : ""
+                }`}
               >
                 <input
                   id="bank"
@@ -302,14 +332,11 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="bank"
                   checked={form.paymentMethod === "bank"}
-                  onChange={() =>
-                    form.paymentMethod = "bank"
-                  }
+                  onChange={() => (form.paymentMethod = "bank")}
                   className="w-4 h-4"
                 />
                 <span className="font-medium">Direct Bank Transfer</span>
               </label>
-
             </aside>
             <div className="text-sm text-slate-600">
               By placing your order you agree to our Terms & Privacy.

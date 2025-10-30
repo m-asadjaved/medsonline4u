@@ -2,6 +2,7 @@ import React from "react";
 
 export function EmailTemplate({
   orderId,
+  email,
   name,
   address,
   phone,
@@ -70,6 +71,9 @@ export function EmailTemplate({
             </h4>
             <p style={{ margin: "4px 0" }}>
               Name: <strong>{name}</strong>
+            </p>            
+            <p style={{ margin: "4px 0" }}>
+              Email: <strong>{email}</strong>
             </p>
             <p style={{ margin: "4px 0" }}>
               Phone: <strong>{phone}</strong>

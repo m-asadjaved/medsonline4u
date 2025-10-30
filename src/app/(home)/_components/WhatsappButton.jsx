@@ -1,8 +1,8 @@
 "use client";
 
 export default function WhatsappButton() {
-  const phoneNumber = "+923001234567"; // replace with your number
-  const message = "Hello, I want to know more!";
+  const phoneNumber = "+19094077730"; // replace with your number
+  const message = "Hello, I want to place an order!";
 
   const whatsappUrl = `https://wa.me/${phoneNumber.replace(
     /[^0-9]/g,

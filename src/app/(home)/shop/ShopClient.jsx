@@ -156,14 +156,14 @@ export default function ShopPage() {
                       </div>
                       <div className="text-sm font-semibold">${p.min_price} - ${p.max_price}</div>
 
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <p
                           className="text-xs text-slate-500 mt-1"
                           dangerouslySetInnerHTML={{
                             __html: `${p.short_description.slice(0, 90)}...`,
                           }}
                         ></p>
-                      </div>
+                      </div> */}
                     </div>
                   </Link>
                 </article>

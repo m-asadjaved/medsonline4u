@@ -36,12 +36,12 @@ export default async function FeaturedProducts({ productId = null, category = nu
               />
               <div className="p-4">
                 <h4 className="font-medium">{p.name}</h4>
-                <p
+                {/* <p
                   className="text-xs text-slate-500 mt-1"
                   dangerouslySetInnerHTML={{
                     __html: `${p.short_description.slice(0, 100)}...`,
                   }}
-                ></p>
+                ></p> */}
                 <div className="mt-4 flex items-center justify-between">
                   <div className="text-lg font-semibold">${p.min_price} - ${p.max_price}</div>
                 </div>
