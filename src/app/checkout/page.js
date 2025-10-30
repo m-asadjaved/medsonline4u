@@ -3,9 +3,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { removeFromCart } = useCart();
+  const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [form, setForm] = useState({
     fullName: "",
@@ -21,6 +24,7 @@ export default function CheckoutPage() {
     cardName: "",
     cardExpiry: "",
     cardCvv: "",
+    paymentMethod: "bank",
   });
   const [step, setStep] = useState(1);
 
@@ -54,40 +58,86 @@ export default function CheckoutPage() {
     () => cartItems.reduce((s, it) => s + it.variation.price * it.quantity, 0),
     [cartItems]
   );
-  const shippingCost = form.shippingMethod === "standard" ? 49 : 149;
+  const shippingCost = form.shippingMethod === "standard" ? 30 : 80;
   const total = subtotal + shippingCost;
 
   function updateField(k, v) {
     setForm((prev) => ({ ...prev, [k]: v }));
   }
 
-  function placeOrder() {
-    alert("Order placed! (demo)");
-    setStep(3);
+  async function placeOrder() {
+    if (!cartItems.length) {
+      alert("Cart is empty");
+      return;
+    }
+
+    setLoading(true);
+
+    const reqBody = {
+      orderId: `ORD-${Date.now()}`,
+      name: form.fullName,
+      address: `${form.address1}, ${form.address2}`,
+      phone: form.phone,
+      city: form.city,
+      state: form.state,
+      pincode: form.pincode,
+      shippingMethod: form.shippingMethod === "standard" ? "Standard" : "Express",
+      total: total,
+      items: cartItems.map((it) => ({
+        name: it.name,
+        variation: it.variation?.name || it.variation,
+        qty: it.qty,
+        total: it.qty * it.price
+      }))
+    };
+
+    console.log("🚀 Sending Order:", reqBody);
+
+    try {
+      const res = await fetch(`/api/orders/new`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reqBody),
+      });
+
+      const data = await res.json();
+      console.log("✅ Order API Response:", data);
+
+      if (!res.ok) throw new Error(data.error || "Failed to submit order");
+
+      // ✅ Clear cart after successful order
+      cartItems.forEach(it => removeFromCart(it.id, it.variation.id));
+      localStorage.removeItem("cart");
+
+      setStep(2);
+
+    } catch (err) {
+      console.error("❌ Order submission failed:", err);
+      alert("Failed to place order. Try again.");
+    }
+    setLoading(false);
   }
 
+
   return (
-    <main className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900">
+    <main className={`${step === 1 ? 'min-h-screen' : ''}  bg-slate-50 p-4 md:p-8 text-slate-900`}>
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-semibold">Checkout</h1>
+        {loading && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-100">
+            <div className="w-12 h-12 border-4 border-t-transparent border-emerald-500 rounded-full animate-spin"></div>
+            <span className="ml-3 text-white font-medium">
+              Placing your order...
+            </span>
+          </div>
+        )}
 
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="lg:col-span-2">
-            <div className="bg-white p-4 rounded-xl shadow-sm">
-              {/* Step Indicators */}
-              <div className="flex items-center gap-3 text-sm text-slate-600">
-                <div
-                  className={`px-3 py-2 rounded ${
-                    step === 1 ? "bg-emerald-600 text-white" : "bg-slate-100"
-                  }`}
-                >
-                  1
-                </div>
-                <div>Address</div>
-              </div>
+        {step === 1 && !loading && (
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section className="lg:col-span-2">
+              <div className="bg-white p-4 rounded-xl shadow-sm">
+                {/* STEP 1: ADDRESS */}
 
-              {/* STEP 1: ADDRESS */}
-              {step === 1 && (
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                   <input
                     value={form.fullName}
@@ -136,11 +186,10 @@ export default function CheckoutPage() {
                     <div className="text-sm font-medium">Shipping method</div>
                     <div className="mt-2 flex gap-2">
                       <label
-                        className={`flex-1 p-3 border rounded-md ${
-                          form.shippingMethod === "standard"
-                            ? "ring-2 ring-emerald-500"
-                            : ""
-                        }`}
+                        className={`flex-1 p-3 border rounded-md ${form.shippingMethod === "standard"
+                          ? "ring-2 ring-emerald-500"
+                          : ""
+                          }`}
                       >
                         <input
                           type="radio"
@@ -155,11 +204,10 @@ export default function CheckoutPage() {
                         </span>
                       </label>
                       <label
-                        className={`flex-1 p-3 border rounded-md ${
-                          form.shippingMethod === "express"
-                            ? "ring-2 ring-emerald-500"
-                            : ""
-                        }`}
+                        className={`flex-1 p-3 border rounded-md ${form.shippingMethod === "express"
+                          ? "ring-2 ring-emerald-500"
+                          : ""
+                          }`}
                       >
                         <input
                           type="radio"
@@ -178,77 +226,113 @@ export default function CheckoutPage() {
 
                   <div className="md:col-span-2 flex items-center justify-end gap-2 mt-4">
                     <button
-                      onClick={() => setStep(2)}
-                      className="px-4 py-2 rounded-md bg-emerald-600 text-white"
+                      onClick={() => placeOrder()}
+                      className="cursor-pointer px-4 py-2 rounded-md bg-emerald-600 text-white"
                     >
-                      Continue to payment
+                      Place Order
                     </button>
                   </div>
                 </div>
-              )}
 
-              {/* STEP 2 & 3 remain the same as your current code */}
-            </div>
-          </section>
 
-          {/* SIDEBAR: Order Summary */}
-          <aside className="lg:col-span-1">
-            <div className="bg-white p-4 rounded-xl shadow-sm">
-              <h3 className="font-semibold">Order summary</h3>
-              <div className="mt-3 space-y-2 text-sm text-slate-600">
-                {cartItems.length === 0 ? (
-                  <div className="text-center text-slate-400 py-4">
-                    Loading cart...
-                  </div>
-                ) : (
-                  cartItems.map((it) => (
-                    <div key={`${it.id}-${it.variation.id}`} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={it.image}
-                          className="h-10 w-10 object-cover rounded-md"
-                          width={40}
-                          height={40}
-                          alt={it.name}
-                        ></Image>
-                        <div>
-                          <div className="text-sm">{it.name}</div>
-                          <div className="text-xs text-slate-500">
-                            Qty: {it.quantity}
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            Pills: {it.variation.name}
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            Price: ${it.price}
+                {/* STEP 2 & 3 remain the same as your current code */}
+              </div>
+            </section>
+
+            {/* SIDEBAR: Order Summary */}
+            <aside className="lg:col-span-1">
+              <div className="bg-white p-4 rounded-xl shadow-sm">
+                <h3 className="font-semibold">Order summary</h3>
+                <div className="mt-3 space-y-2 text-sm text-slate-600">
+                  {cartItems.length === 0 ? (
+                    <div className="text-center text-slate-400 py-4">
+                      Loading cart...
+                    </div>
+                  ) : (
+                    cartItems.map((it) => (
+                      <div key={`${it.id}-${it.variation.id}`} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={it.image}
+                            className="h-10 w-10 object-cover rounded-md"
+                            width={40}
+                            height={40}
+                            alt={it.name}
+                          ></Image>
+                          <div>
+                            <div className="text-sm">{it.name}</div>
+                            <div className="text-xs text-slate-500">
+                              Qty: {it.quantity}
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              Pills: {it.variation.name}
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              Price: ${it.price}
+                            </div>
                           </div>
                         </div>
+                        <div className="font-medium">${it.total * it.qty}</div>
                       </div>
-                      <div className="font-medium">${it.total * it.qty}</div>
-                    </div>
-                  ))
-                )}
+                    ))
+                  )}
 
-                <div className="border-t pt-3 flex justify-between">
-                  <span>Subtotal</span>
-                  <span>${subtotal}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span>${shippingCost}</span>
-                </div>
-                <div className="border-t pt-3 font-semibold flex justify-between">
-                  <span>Total</span>
-                  <span>${total}</span>
+                  <div className="border-t pt-3 flex justify-between">
+                    <span>Subtotal</span>
+                    <span>${subtotal}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Shipping</span>
+                    <span>${shippingCost}</span>
+                  </div>
+                  <div className="border-t pt-3 font-semibold flex justify-between">
+                    <span>Total</span>
+                    <span>${total}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </aside>
-        </div>
+              <label
+                htmlFor="bank"
+                className={`cursor-pointer bg-white p-4 mt-2 rounded-xl shadow-sm flex items-center gap-3 ${form.paymentMethod === "bank" ? "ring-1 ring-emerald-600 bg-emerald-50" : ""
+                  }`}
+              >
+                <input
+                  id="bank"
+                  type="radio"
+                  name="paymentMethod"
+                  value="bank"
+                  checked={form.paymentMethod === "bank"}
+                  onChange={() =>
+                    form.paymentMethod = "bank"
+                  }
+                  className="w-4 h-4"
+                />
+                <span className="font-medium">Direct Bank Transfer</span>
+              </label>
 
-        <div className="mt-6 text-sm text-slate-600">
-          By placing your order you agree to our Terms & Privacy.
-        </div>
+            </aside>
+            <div className="text-sm text-slate-600">
+              By placing your order you agree to our Terms & Privacy.
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="bg-white p-10 mt-10 rounded-xl shadow-md text-center">
+            <h2 className="text-2xl font-semibold text-emerald-600">
+              🎉 Thank you for your order!
+            </h2>
+            <p className="text-gray-600 mt-2">
+              We’ve received your order and will contact you shortly.
+            </p>
+            <button
+              onClick={() => router.push("/shop")}
+              className="cursor-pointer mt-6 px-6 py-3 bg-emerald-600 text-white rounded-md font-medium"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

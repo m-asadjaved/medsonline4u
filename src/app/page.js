@@ -104,7 +104,7 @@ export default function Home() {
             <h3 className="text-2xl font-bold">Trusted by thousands across the country</h3>
             <p className="mt-3 text-slate-100/90">"Quick delivery and authentic medicines — saved me a trip to the pharmacy."</p>
             <div className="mt-4 flex items-center gap-3">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4" alt="user" className="h-12 w-12 rounded-full object-cover" />
+              {/* <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4" alt="user" className="h-12 w-12 rounded-full object-cover" /> */}
               <div>
                 <div className="text-sm font-medium">Ayesha</div>
                 <div className="text-xs opacity-80">Verified customer</div>

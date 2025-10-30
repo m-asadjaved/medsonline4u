@@ -66,10 +66,12 @@ export default function CartPage() {
     () => products.reduce((sum, p) => sum + p.price * p.quantity, 0),
     [products]
   );
-  const discount = appliedCoupon === "SAVE10" ? Math.round(subtotal * 0.1) : 0;
-  const shipping = subtotal > 499 ? 0 : 49;
-  // const total = subtotal - discount + shipping;
-  const total = subtotal - discount;
+  // const discount = appliedCoupon === "SAVE10" ? Math.round(subtotal * 0.1) : 0;
+  const discount = 0;
+  // const shipping = subtotal > 499 ? 0 : 49;
+  const shipping = 30;
+  const total = subtotal - discount + shipping;
+  // const total = subtotal - discount;
 
   function applyCoupon() {
     if (coupon.trim().toUpperCase() === "SAVE10") {
@@ -167,10 +169,10 @@ export default function CartPage() {
                   <span>Discount</span>
                   <span>-${discount.toLocaleString()}</span>
                 </div>
-                {/* <div className="flex justify-between mt-2">
+                <div className="flex justify-between mt-2">
                   <span>Shipping</span>
                   <span>{shipping === 0 ? "Free" : `$${shipping}`}</span>
-                </div> */}
+                </div>
                 <div className="border-t mt-3 pt-3 flex justify-between font-semibold">
                   <span>Total</span>
                   <span>${total.toLocaleString()}</span>

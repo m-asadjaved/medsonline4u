@@ -104,7 +104,7 @@ export default function ShopPage() {
             <div className="mt-4">
               <div className="mt-2 flex flex-col gap-2">
                 {categories.map(cat => (
-                  <button key={cat.id} onClick={() => {setSelectedCategory(cat.id);}} className={`text-sm text-left px-3 py-2 rounded-md ${selectedCategory == cat.id ? 'bg-emerald-100 border border-emerald-200' : 'hover:bg-emerald-50 hover:border-emerald-100'}`}>
+                  <button key={cat.id} onClick={() => {setSelectedCategory(cat.id);}} className={`cursor-pointer text-sm text-left px-3 py-2 rounded-md ${selectedCategory == cat.id ? 'bg-emerald-100 border border-emerald-200' : 'hover:bg-emerald-50 hover:border-emerald-100'}`}>
                     {cat.name}
                   </button>
                 ))}
