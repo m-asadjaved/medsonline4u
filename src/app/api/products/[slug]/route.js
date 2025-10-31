@@ -11,7 +11,6 @@ export async function GET(req, { params }) {
     // const product = await redis.json.get(`product:${slug}`);
 
     // if(product){
-    //   console.log('from redis')
     //   return NextResponse.json(product);
     // }
 
@@ -22,7 +21,6 @@ export async function GET(req, { params }) {
     if (!rows.length) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     await redis.json.set(`product:${slug}`, '$', {...rows[0], variations});
-    console.log('from db')
     return NextResponse.json({...rows[0], variations});
   
   }

@@ -5,25 +5,6 @@
 
 /* For WebKit browsers (Chrome, Safari, Edge) */
 
-/* override Jodit dark theme or custom theme */
-.jodit_theme_dark {
-  --jd-color-text: #ECECEC;
-  --jd-color-background-default: #1E1E1E;  /* dark background */
-  --jd-color-panel: #2A2A2A;               /* toolbar background */
-  --jd-color-border: #3C3C3C;
-  --jd-color-icon: #B0B0B0;
-}
-
-.jodit_theme_custom {
-  /* if you choose to use custom theme name instead of built-in dark */
-  --jd-color-text: #f0f0f0;
-  --jd-color-background-default: #0F1115;
-  --jd-color-panel: #2C2E33;
-  --jd-color-border: #444;
-  --jd-color-icon: #DDD;
-}
-
-
 ::-webkit-scrollbar {
   width: 0px; /* Adjust width as needed */
   height: 0px; /* Adjust height for horizontal scrollbars */
