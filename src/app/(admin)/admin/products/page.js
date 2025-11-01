@@ -9,7 +9,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Target } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,18 +70,34 @@ export const columns = [
 		),
 	},
 	{
-		accessorKey: "image_url",
+		accessorKey: "images",
 		header: () => <div>Image</div>,
-		cell: ({ row }) => (
-			<div className="w-10 h-10">
-				<Image
-					src={`${row.getValue("image_url")}`}
-					alt={`Product Image`}
-					width={50}
-					height={50}
-				/>
-			</div>
-		),
+		cell: ({ row }) => {
+			let images = row.getValue("images");
+
+			// Ensure it's a parsed array
+			if (typeof images === "string") {
+				try {
+					images = JSON.parse(images);
+				} catch {
+					images = [];
+				}
+			}
+
+			const img = images?.[0] ?? "/no-image.png"; // fallback
+
+			return (
+				<div className="w-10 h-10">
+					<Image
+						src={img}
+						alt="Product Image"
+						width={50}
+						height={50}
+						className="object-cover rounded"
+					/>
+				</div>
+			);
+		},
 	},
 	{
 		accessorKey: "name",
@@ -99,15 +115,16 @@ export const columns = [
 			);
 		},
 		cell: ({ row }) => {
+			const images = typeof row.getValue("images") === "string"
+				? JSON.parse(row.getValue("images"))
+				: row.getValue("images");
+
+			const img = images?.[0] ?? "/no-image.png";
+
 			return (
 				<div className="flex items-center space-x-2">
 					<div className="w-10 h-10 rounded overflow-hidden items-center justify-center">
-						<Image
-							src={`${row.getValue("image_url")}`}
-							alt={`Product Image`}
-							width={50}
-							height={50}
-						/>
+						<Image src={img} alt="Product Image" width={50} height={50} />
 					</div>
 					<Link
 						href={`/admin/products/edit/${row.getValue("slug")}`}
@@ -129,7 +146,7 @@ export const columns = [
 		header: "Short Description",
 		cell: ({ row }) => (
 			<div className="capitalize">
-				{row.getValue("short_description").slice(0, 50)}
+				{row.getValue("short_description").slice(0, 50)}...
 			</div>
 		),
 	},
@@ -223,7 +240,7 @@ export default function DataTableDemo() {
 	const [columnFilters, setColumnFilters] = React.useState([]);
 	const [columnVisibility, setColumnVisibility] = React.useState({
 		id: false,
-		image_url: false,
+		images: false,
 		slug: false,
 	});
 	const [rowSelection, setRowSelection] = React.useState({});
@@ -320,11 +337,11 @@ export default function DataTableDemo() {
 													{header.isPlaceholder
 														? null
 														: flexRender(
-																header.column
-																	.columnDef
-																	.header,
-																header.getContext()
-															)}
+															header.column
+																.columnDef
+																.header,
+															header.getContext()
+														)}
 												</TableHead>
 											);
 										})}

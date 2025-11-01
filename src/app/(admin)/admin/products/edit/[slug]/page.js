@@ -32,14 +32,16 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import { useRouter } from "next/navigation";
-import Alert from "../../components/Alert";
+import Link from "next/link";
+import { Check, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge"
 
 // Mock product shape (fallback)
 const SAMPLE_PRODUCT = {
 	id: "p_001",
 	title: "Classic Cotton Tee",
 	slug: "a-b-c",
-	handle: "classic-cotton-tee",
+	categories: [1],
 	description:
 		"Soft, breathable cotton t-shirt. Available in multiple colors and sizes.",
 	price: 24.99,
@@ -82,6 +84,18 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 	const router = useRouter();
 	const [product, setProduct] = useState(initial);
 	const [images, setImages] = useState(initial.images || []);
+
+	const [categories, setCategories] = useState([]); // fetched
+	const [productCategories, setProductCategories] = useState([]); // selected IDs
+	const [searchText, setSearchText] = useState("");
+
+	const filteredCategories = Array.isArray(categories)
+		? categories.filter((cat) =>
+			cat.name.toLowerCase().includes(searchText.toLowerCase())
+		)
+		: [];
+
+
 	const [variantDraft, setVariantDraft] = useState({
 		variation_name: "",
 		variation_sku: "",
@@ -90,11 +104,12 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 	});
 	const [name, setName] = useState(product.name || "");
 	const [saving, setSaving] = useState(false);
-	const [previewOpen, setPreviewOpen] = useState(true);
+	const [previewOpen, setPreviewOpen] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [slugLoading, setSlugLoading] = useState(false);
 	const [realSlug, setRealSlug] = useState(false);
-	const [showAlert, setShowAlert] = useState(false);
+	const [success, setSuccess] = useState(false);
+	const [error, setError] = useState(false);
 
 	// Drawer + pagination state
 	const [drawerOpen, setDrawerOpen] = useState(false);
@@ -179,9 +194,19 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 	}
 
 	useEffect(() => {
+		fetchCategories();
 		fetchProductData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	async function fetchCategories() {
+		const res = await fetch(`/api/categories`, {
+			cache: "no-store",
+		});
+
+		const data = await res.json();
+		setCategories(data.categories);
+	}
 
 	async function validateSlug(newSlug) {
 		if (!newSlug || newSlug === realSlug) return;
@@ -225,6 +250,7 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 				url: u,
 			}));
 
+			setProductCategories(JSON.parse(data.categories));
 			setProduct(data);
 			setRealSlug(data.slug);
 			setImages(uiImages);
@@ -235,10 +261,29 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 		}
 	}
 
+	const handleDelete = async (id) => {
+		if (!confirm("Delete product permanently?")) return;
+
+		const res = await fetch(`/api/admin/products/delete/${id}`, {
+			method: "DELETE",
+		});
+
+		const data = await res.json();
+
+		if (!res.ok) {
+			alert('failed to delete the product')
+			throw new Error(data.error || "Failed to delete product");
+		}
+
+		router.push("/admin/products");
+		return;
+	}
+
 	async function handleSave() {
 		setSaving(true);
 		try {
 			const url = `/api/admin/products/save`; // keep as you have it
+			product.categories = productCategories;
 			const productCopy = { ...product };
 			// images state uses {name,url}, product.images should be array of url strings
 			productCopy.images = images.map((img) => img.url);
@@ -252,26 +297,27 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 			const result = await res.json();
 			if (!res.ok) {
 				// server can return { error: "..." } — surface it
+				setError(true);
+				setSuccess(false);
 				throw new Error(result?.error || `API ${res.status}`);
 			}
 
 			// server returns product object in result.product per server code above
-			const returnedProduct = result.product ?? result.data ?? result;
-			// normalize returned images and update both product and ui images
-			const normalized = normalizeImagesFromServer(
-				returnedProduct?.images
-			);
-			returnedProduct.images = normalized;
+			// const returnedProduct = result.product ?? result.data ?? result;
+			// // normalize returned images and update both product and ui images
+			// const normalized = normalizeImagesFromServer(
+			// 	returnedProduct?.images
+			// );
+			// returnedProduct.images = normalized;
 
-			setProduct(returnedProduct);
-			setImages(
-				normalized.map((u, i) => ({ name: `remote-${i}`, url: u }))
-			);
+			// setProduct(returnedProduct);
+			// setImages(
+			// 	normalized.map((u, i) => ({ name: `remote-${i}`, url: u }))
+			// );
 
-			setShowAlert(true);
-			setTimeout(() => {
-				setShowAlert(false);
-			}, 30000);
+			setError(false);
+			setSuccess(true);
+			window.history.pushState({}, "", product.slug);
 		} catch (err) {
 			console.error(err);
 			alert("Save failed: " + (err.message || err));
@@ -281,8 +327,8 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 	}
 
 	/* -------------------------
-     Pagination-aware Remote fetch
-     ------------------------- */
+	 Pagination-aware Remote fetch
+	 ------------------------- */
 
 	// central fetcher for remote images (page is zero-based)
 	async function fetchRemoteImages({ pageIndex = 0, limitCount = 20 } = {}) {
@@ -403,10 +449,10 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 				<div className="p-6 max-w-7xl mx-auto">
 					<div className="flex items-center justify-between mb-6">
 						<h1 className="text-2xl font-bold">Product editor</h1>
-						{showAlert && <Alert link={product.slug} />}
 						<div className="flex gap-2 items-center">
 							<Select
 								onValueChange={(v) => updateField("status", v)}
+								value={product.status || "active"}
 							>
 								<SelectTrigger className="w-40">
 									<SelectValue placeholder={product.status} />
@@ -428,9 +474,19 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 										Saving...
 										<Spinner />
 									</>
-								) : (
+								) : !success && !error ? (
 									"Save"
-								)}
+								) : success && !error ? (
+									<>
+										Saved
+										<Check className="text-green-700" />
+									</>
+								) : !success && error ? (
+									<>
+										Error
+										<X className="text-red-700" />
+									</>
+								) : ''}
 							</Button>
 						</div>
 					</div>
@@ -681,7 +737,7 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 																			e
 																				.target
 																				.value ||
-																				0
+																			0
 																		).toFixed(
 																			2
 																		)
@@ -713,7 +769,7 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 																			e
 																				.target
 																				.value ||
-																				0
+																			0
 																		).toFixed(
 																			2
 																		)
@@ -883,12 +939,82 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 								</CardContent>
 							</Card>
 
+							<Card className="mb-6">
+								<CardHeader>
+									<CardTitle>Categories</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<div className="relative">
+										<Input
+											placeholder="Search categories..."
+											value={searchText}
+											onChange={(e) => setSearchText(e.target.value)}
+										/>
+										{searchText && categories.length === 0 && (
+											<div className="absolute z-10 bg-slate-800 border rounded w-full mt-1 p-2 text-gray-500">
+												Loading categories...
+											</div>
+										)}
+
+										{searchText && categories.length > 0 && filteredCategories.length === 0 && (
+											<div className="absolute z-10 bg-slate-800 border rounded w-full mt-1 p-2 text-gray-500">
+												No matches found
+											</div>
+										)}
+										{searchText && categories.length > 0 && filteredCategories.length > 0 && (
+											<ul className="absolute z-10 bg-slate-800 border rounded w-full mt-1 shadow">
+												{filteredCategories.map((cat) => (
+													<li
+														key={cat.id}
+														className="p-2 hover:bg-slate-900 cursor-pointer"
+														onClick={() => {
+															if (!productCategories.includes(cat.id)) {
+																setProductCategories([...productCategories, cat.id]);
+															}
+															setSearchText("");
+														}}
+													>
+														{cat.name}
+													</li>
+												))}
+											</ul>
+										)}
+
+
+										<div className="flex flex-wrap gap-2 mt-3">
+											{productCategories.map((catId) => {
+												const cat = categories.find((c) => c.id === catId);
+												return (
+													<Badge
+														key={catId}
+														variant="secondary"
+														className="cursor-pointer"
+														onClick={() =>
+															setProductCategories(
+																productCategories.filter((id) => id !== catId)
+															)
+														}
+													>
+														{cat?.name} ✕
+													</Badge>
+												);
+											})}
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+
 							<Card>
 								<CardHeader>
 									<CardTitle>Live preview</CardTitle>
 									<CardDescription>
 										Toggle on/off and see quick product
 										preview
+									</CardDescription>
+									<CardDescription className={`underline text-blue-400`}>
+										<Link href={`/products/${product.slug}`} target="_blank">
+											View in Store
+										</Link>
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
@@ -953,9 +1079,7 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 						<Button
 							variant="destructive"
 							onClick={() =>
-								confirm(
-									"Delete product? This cannot be undone"
-								) && alert("Deleted (demo)")
+								handleDelete(product.id)
 							}
 						>
 							Delete
@@ -966,9 +1090,19 @@ export default function ProductEditor({ initial = SAMPLE_PRODUCT }) {
 									Saving...
 									<Spinner />
 								</>
-							) : (
+							) : !success && !error ? (
 								"Save"
-							)}
+							) : success && !error ? (
+								<>
+									Saved
+									<Check className="text-green-700" />
+								</>
+							) : !success && error ? (
+								<>
+									Error
+									<X className="text-red-700" />
+								</>
+							) : ''}
 						</Button>
 					</div>
 

@@ -18,6 +18,7 @@ export async function GET() {
   );
 
   await redis.json.set("categories", "$", { categories: rows });
+  await redis.expire("categories", process.env.REDIS_TTL);
 
   return NextResponse.json({ categories: rows });
 }

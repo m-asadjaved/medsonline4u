@@ -54,6 +54,7 @@ export async function GET(req, { params }) {
       page,
       category,
     });
+    await redis.expire("category:" + category + ":page:" + page, process.env.REDIS_TTL);
 
     return NextResponse.json({
       products: rows,

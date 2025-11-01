@@ -18,7 +18,7 @@ export async function GET() {
       p.id,
       p.name,
       p.slug,
-      p.image_url,
+      p.images,
       LEFT(p.short_description, 50) AS short_description,
       MAX(v.variation_mrp) AS max_price,
       c.name AS category_name

@@ -30,6 +30,7 @@ export async function GET() {
   );
 
   await redis.json.set("featuredProducts", "$", { products: rows });
+  await redis.expire("featuredProducts", process.env.REDIS_TTL);
 
   return NextResponse.json({ products: rows });
 }
