@@ -11,7 +11,7 @@ export default async function FeaturedProducts() {
   return (
     <>
       {/* CATEGORIES */}
-      <section id="categories" className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-12">
+      <section id="categories" className="scroll-mt-20 md:scroll-mt-24 max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-12">
         <h3 className="text-xl font-semibold">Browse by category</h3>
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
           {data.categories.map((c) => (

@@ -2,6 +2,7 @@ import React from "react";
 import FeaturedProducts from '@/app/(home)/_components/FeaturedProducts'
 import Categories from '@/app/(home)/_components/Categories'
 import Link from "next/link";
+import LeadsForm from "@/app/(home)/_components/LeadsForm";
 
 export default function Home() {
 
@@ -97,33 +98,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS + CTA */}
-      <section className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-12">
-        <div className="bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold">Trusted by thousands across the country</h3>
-            <p className="mt-3 text-slate-100/90">"Quick delivery and authentic medicines — saved me a trip to the pharmacy."</p>
-            <div className="mt-4 flex items-center gap-3">
-              {/* <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&ixlib=rb-4.0.3&s=4" alt="user" className="h-12 w-12 rounded-full object-cover" /> */}
-              <div>
-                <div className="text-sm font-medium">Ayesha</div>
-                <div className="text-xs opacity-80">Verified customer</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full md:w-80">
-            <div className="bg-white rounded-xl p-4 text-slate-900">
-              <h4 className="font-semibold">Start saving on your medicines</h4>
-              <p className="text-xs text-slate-500 mt-2">Sign up for price alerts and repeat delivery discounts.</p>
-              <div className="mt-4 flex gap-2">
-                <input placeholder="Email address" className="flex-1 px-3 py-2 rounded-lg border border-slate-200 outline-none text-sm" />
-                <button className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm">Subscribe</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <LeadsForm />
       </>
   );
 }
