@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+
 
 const Footer = () => {
   return (
@@ -17,17 +19,14 @@ const Footer = () => {
           <div>
             <h5 className="font-semibold text-slate-900">Company</h5>
             <ul className="mt-2 space-y-2">
-              <li>About</li>
-              <li>Careers</li>
-              <li>Contact</li>
+              <li><Link href="/about">About</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
             </ul>
           </div>
           <div>
             <h5 className="font-semibold text-slate-900">Support</h5>
             <ul className="mt-2 space-y-2">
-              <li>Help Center</li>
-              <li>Shipping & Returns</li>
-              <li>Privacy</li>
+              <li><Link href="/delivery-and-returns">Delivery & Returns</Link></li>
             </ul>
           </div>
         </div>

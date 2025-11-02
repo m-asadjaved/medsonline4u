@@ -59,7 +59,7 @@ export default function Home() {
                   <div className="mt-1">Authenticity</div>
                 </div>
                 <div>
-                  <div className="font-semibold">2hr</div>
+                  <div className="font-semibold">24hr</div>
                   <div className="mt-1">Fast delivery*</div>
                 </div>
                 <div>
@@ -83,7 +83,7 @@ export default function Home() {
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="h-12 w-12 rounded-lg bg-emerald-50 flex items-center justify-center">1</div>
             <h4 className="mt-4 font-medium">Search or upload</h4>
-            <p className="text-sm text-slate-500 mt-2">Find medicines or upload a photo of your prescription.</p>
+            <p className="text-sm text-slate-500 mt-2">Find medicines or upload a photo of your medication.</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="h-12 w-12 rounded-lg bg-emerald-50 flex items-center justify-center">2</div>

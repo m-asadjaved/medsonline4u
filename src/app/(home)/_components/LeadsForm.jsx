@@ -6,15 +6,25 @@ export default function LeadsForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
   const validate = () => {
-    if (!name.trim()) return setError("Please enter your name."), false;
-    if (!email.trim() || !email.includes("@")) return setError("Please enter a valid email."), false;
+    if (!name.trim()) {
+      setError("Please enter your name.");
+      return false;
+    }
+    if (!email.trim() || !email.includes("@") || (email.split("@")[1] || "").indexOf(".") === -1) {
+      setError("Please enter a valid email.");
+      return false;
+    }
     const digits = phone.replace(/\D/g, "");
-    if (digits.length < 7) return setError("Please enter a valid phone number."), false;
+    if (digits.length < 7 || digits.length > 15) {
+      setError("Please enter a valid phone number.");
+      return false;
+    }
     setError("");
     return true;
   };
@@ -31,17 +41,26 @@ export default function LeadsForm() {
       const res = await fetch("/api/contact/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, email }),
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
+          message: message.trim(), // optional, may be empty
+        }),
       });
 
-      if (!res.ok) throw new Error("Failed to send");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to submit. Try again.");
+      }
 
       setSuccess(true);
       setName("");
       setPhone("");
       setEmail("");
+      setMessage("");
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || "Something went wrong. Try again.");
     } finally {
       setLoading(false);
     }
@@ -49,14 +68,14 @@ export default function LeadsForm() {
 
   return (
     <section className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-12">
-      <div className="bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
+      <div className="bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-start gap-10">
         {/* LEFT SIDE — VALUE PROP */}
         <div className="flex-1 space-y-5">
           <h3 className="text-3xl md:text-4xl font-extrabold leading-tight">
             Get <span className="text-emerald-100">exclusive discounts</span> and free delivery on your order
           </h3>
           <p className="text-emerald-50/90 max-w-md">
-            Join thousands of customers who save time and money by ordering verified medicines online.  
+            Join thousands of customers who save time and money by ordering verified medicines online.
             Stay updated with our offers, refill reminders, and expert health tips.
           </p>
 
@@ -100,31 +119,41 @@ export default function LeadsForm() {
         <div className="w-full md:w-96">
           <div className="bg-white rounded-xl p-6 text-slate-900 shadow-lg">
             <h4 className="font-semibold text-lg">Join & Save Today</h4>
-            <p className="text-xs text-slate-500 mt-1 mb-4">
-              Fill out your details and we’ll contact you shortly.
-            </p>
+            <p className="text-xs text-slate-500 mt-1 mb-4">Fill out your details and we’ll contact you shortly.</p>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Full name"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
-              />
-
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+92 300 0000000"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
-              />
-
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
-              />
+            <form onSubmit={handleSubmit} className="space-y-3" noValidate>
+                <input
+                  required
+                  aria-required="true"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full name"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
+                />
+                <input
+                  required
+                  aria-required="true"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
+                />
+                <input
+                  required
+                  aria-required="true"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300"
+                />
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Anything you want to know (optional)"
+                  rows={4}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-300 resize-none"
+                />
 
               {error && <div className="text-sm text-red-600">{error}</div>}
               {success && <div className="text-sm text-emerald-700">Thanks — we’ll reach out soon!</div>}

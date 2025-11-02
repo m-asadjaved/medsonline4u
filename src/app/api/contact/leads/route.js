@@ -15,6 +15,7 @@ export async function POST(req) {
             <p><strong>Name:</strong> ${formData.name}</p>
             <p><strong>Email:</strong> ${formData.email}</p>
             <p><strong>Phone:</strong> ${formData.phone}</p>
+            <p><strong>Message:</strong> ${formData.message}</p>
           </div>
         `,
 	});
