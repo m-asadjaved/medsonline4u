@@ -8,11 +8,11 @@ export async function GET(req, { params }) {
 
     if (!slug) return NextResponse.json({ error: 'Invalid slug' }, { status: 400 });
 
-    // const product = await redis.json.get(`product:${slug}`);
+    const product = await redis.json.get(`product:${slug}`);
 
-    // if(product){
-    //   return NextResponse.json(product);
-    // }
+    if(product){
+      return NextResponse.json(product);
+    }
 
     const pool = getPool();
     const [rows] = await pool.query('SELECT p.* FROM products p WHERE p.slug = ?', [slug]);
@@ -28,8 +28,8 @@ export async function GET(req, { params }) {
   
     if (!rows.length) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    // await redis.json.set(`product:${slug}`, '$', {...rows[0], variations});
-    // await redis.expire(`product:${slug}`, process.env.REDIS_TTL);
+    await redis.json.set(`product:${slug}`, '$', {...rows[0], variations});
+    await redis.expire(`product:${slug}`, process.env.REDIS_TTL);
     return NextResponse.json({...rows[0], variations, categories});
   
   }
