@@ -3,7 +3,7 @@ const nextConfig = {
   /* config options here */
   // cacheComponents: true,
   images: {
-    domains: ['medzforyou.com'],
+    domains: ['medzforyou.com', 'ik.imagekit.io'],
   },
 };
 

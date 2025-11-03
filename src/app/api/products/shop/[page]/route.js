@@ -41,6 +41,7 @@ export async function GET(req, { params }) {
     products: rows, 
     totalRows: totalRows[0].total_products 
   });
+  await redis.expire("page:" + page, process.env.REDIS_TTL);
 
   return NextResponse.json({ products: rows, totalRows: totalRows[0].total_products });
 }
