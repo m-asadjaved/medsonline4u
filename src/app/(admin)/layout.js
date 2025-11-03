@@ -11,7 +11,7 @@ export default function Layout({ children }) {
     <html lang="en">
       <head />
       <body className="dark">
-        <NextTopLoader showSpinner={false} color="lab(56 -45.31 16.82)" />
+        <NextTopLoader showSpinner={false} color="RGB(139,148,165)" />
         <Sidebar>
         {children}
         </Sidebar>
