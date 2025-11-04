@@ -103,8 +103,8 @@ export default function CheckoutPage() {
         form.shippingMethod === "standard" ? "Standard" : "Express",
       total: total,
       items: cartItems.map((it) => ({
-        name: it.name,
-        variation: it.variation?.name || it.variation,
+        id: it.id,
+        variation_id: it.variation.id,
         qty: it.qty,
         total: it.qty * it.price,
       })),

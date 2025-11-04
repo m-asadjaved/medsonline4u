@@ -97,7 +97,7 @@ const getColumns = (handleDeleteProduct) => [
 		},
 		cell: ({ row }) => {
 			return (
-				<Link href={`/admin/orders/view/${row.getValue("id")}`} className="underline">
+				<Link href={`/admin/orders/details/${row.getValue("id")}`} className="underline">
 					{row.getValue("name")}
 				</Link>
 			);
@@ -126,6 +126,11 @@ const getColumns = (handleDeleteProduct) => [
 			);
 		},
 		cell: ({ row }) => <div className="flex items-center space-x-2"><div className="">${row.getValue("total_value")}</div></div>,
+	},
+	{
+		accessorKey: "status",
+		header: () => <div>Status</div>,
+		cell: ({ row }) => <div className={`${row.getValue("status") === "pending" ? "bg-red-700" : row.getValue("status") === "delivered" ? "bg-green-700" : "bg-orange-700"} w-auto text-center rounded p-1 text-md`}>{row.getValue("status")}</div>,
 	},
 	{
 		id: "actions",

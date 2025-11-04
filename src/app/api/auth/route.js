@@ -1,36 +1,53 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { findByEmail } from "@/lib/users";
 import { NextResponse } from "next/server";
+import { getPool } from '@/lib/mysql'; // adjust path
 
 export async function POST(req) {
-  const body = await req.json();
+  try {
+    const { email, password } = await req.json();
 
-  const { email, password } = body;
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Missing email or password" },
+        { status: 400 }
+      );
+    }
 
-  if (!email || !password)
-    return NextResponse.json(
-      { error: "Missing email or password" },
-      { status: 400 }
+    const pool = await getPool();
+    const [rows] = await pool.query(
+      "SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1",
+      [email]
     );
 
-  const user = findByEmail(email);
-  if (!user)
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
 
-  const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-  if (!passwordMatches)
-    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    const user = rows[0];
 
-  const token = jwt.sign(
-    { sub: user.id, email: user.email, name: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "15m" }
-  );
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    }
 
-  // respond with user info (but never include password)
-  return NextResponse.json(
-    { token },
-    { status: 200 }
-  );
+    const token = jwt.sign(
+      {
+        sub: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "15m" }
+    );
+
+    return NextResponse.json({ token }, { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
+  }
 }

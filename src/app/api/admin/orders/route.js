@@ -17,6 +17,7 @@ export async function GET() {
     `SELECT 
       o.id,
       o.total_value,
+      o.status,
       o.created_at,
       u.name,
       u.city,
@@ -28,7 +29,8 @@ export async function GET() {
    LEFT JOIN shipping_methods s ON s.id = o.shipping_method
    LEFT JOIN payment_methods p ON p.id = o.payment_method
    GROUP BY o.id
-   ORDER BY o.id DESC`
+   ORDER BY o.id DESC
+   LIMIT 100`
   );
 
 //   await redis.json.set("orders", "$", { orders: rows });
