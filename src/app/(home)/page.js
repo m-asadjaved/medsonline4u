@@ -2,7 +2,6 @@ import React from "react";
 import FeaturedProducts from '@/app/(home)/_components/FeaturedProducts'
 import Categories from '@/app/(home)/_components/Categories'
 import Link from "next/link";
-import LeadsForm from "@/app/(home)/_components/LeadsForm";
 
 export default function Home() {
 
@@ -97,8 +96,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <LeadsForm />
       </>
   );
 }

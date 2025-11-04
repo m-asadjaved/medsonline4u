@@ -138,7 +138,7 @@ export default function CheckoutPage() {
 
   return (
     <main
-      className={`${step === 1 ? "min-h-screen" : ""}  bg-slate-50 p-4 md:p-8 text-slate-900`}
+      className={`bg-slate-50 p-4 md:p-8 text-slate-900`}
     >
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-semibold">Checkout</h1>
@@ -163,57 +163,57 @@ export default function CheckoutPage() {
                     value={form.fullName}
                     onChange={(e) => updateField("fullName", e.target.value)}
                     placeholder="Full name"
-                    className="px-3 py-2 rounded-md border"
+                    className="px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.phone}
                     onChange={(e) => updateField("phone", e.target.value)}
                     placeholder="Phone"
-                    className="px-3 py-2 rounded-md border"
+                    className="px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.email}
                     onChange={(e) => updateField("email", e.target.value)}
                     placeholder="Email Address"
-                    className="md:col-span-2 px-3 py-2 rounded-md border"
+                    className="md:col-span-2 px-3 py-2 rounded-md border border-emerald-500"
                     type="email"
                   />                  
                   <input
                     value={form.address1}
                     onChange={(e) => updateField("address1", e.target.value)}
                     placeholder="Address line 1"
-                    className="md:col-span-2 px-3 py-2 rounded-md border"
+                    className="md:col-span-2 px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.address2}
                     onChange={(e) => updateField("address2", e.target.value)}
                     placeholder="Address line 2"
-                    className="md:col-span-2 px-3 py-2 rounded-md border"
+                    className="md:col-span-2 px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.city}
                     onChange={(e) => updateField("city", e.target.value)}
                     placeholder="City"
-                    className="px-3 py-2 rounded-md border"
+                    className="px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.state}
                     onChange={(e) => updateField("state", e.target.value)}
                     placeholder="State"
-                    className="px-3 py-2 rounded-md border"
+                    className="px-3 py-2 rounded-md border border-emerald-500"
                   />
                   <input
                     value={form.pincode}
                     onChange={(e) => updateField("pincode", e.target.value)}
                     placeholder="Pincode"
-                    className="px-3 py-2 rounded-md border"
+                    className="px-3 py-2 rounded-md border border-emerald-500"
                   />
 
                   <div className="md:col-span-2 mt-2">
                     <div className="text-sm font-medium">Shipping method</div>
                     <div className="mt-2 flex gap-2">
                       <label
-                        className={`flex-1 p-3 border rounded-md ${
+                        className={`flex-1 p-3 border border-emerald-500 rounded-md ${
                           form.shippingMethod === "standard"
                             ? "ring-2 ring-emerald-500"
                             : ""
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
                         <span className="ml-2">Standard (3-5 days) - $30</span>
                       </label>
                       <label
-                        className={`flex-1 p-3 border rounded-md ${
+                        className={`flex-1 p-3 border border-emerald-500 rounded-md ${
                           form.shippingMethod === "express"
                             ? "ring-2 ring-emerald-500"
                             : ""

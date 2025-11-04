@@ -83,7 +83,7 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900">
+    <main className="bg-slate-50 p-4 md:p-8 text-slate-900">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-semibold">Your cart</h1>
 

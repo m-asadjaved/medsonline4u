@@ -1,9 +1,11 @@
 import React from "react";
 import Link from "next/link";
+import LeadsForm from "@/app/(home)/_components/LeadsForm";
 
 const Footer = () => {
 	return (
 		<>
+			<LeadsForm />
 			{/* FOOTER */}
 			<footer className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mt-12 pb-12">
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-slate-600">
