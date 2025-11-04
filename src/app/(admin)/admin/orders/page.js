@@ -70,6 +70,19 @@ const getColumns = (handleDeleteProduct) => [
 		cell: ({ row }) => <div className="w-10 h-10">{row.getValue("id")}</div>,
 	},
 	{
+		accessorKey: "created_at",
+		header: () => <div>Order Date</div>,
+		cell: ({ row }) => {
+			const date = new Date(row.getValue("created_at"));
+			const year = date.getFullYear();
+			const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed
+			const day = date.getDate().toString().padStart(2, '0');
+
+			const formattedDate = `${day}-${month}-${year}`; // Example: "2025-11-03"
+			return (<div className="">{formattedDate}</div>)
+		}
+	},
+	{
 		accessorKey: "name",
 		header: ({ column }) => {
 			return (
@@ -84,28 +97,26 @@ const getColumns = (handleDeleteProduct) => [
 		},
 		cell: ({ row }) => {
 			return (
-				<div className="flex items-center space-x-2">
-					<Link href={`/admin/orders/view/${row.getValue("id")}`} className="underline">
-						{row.getValue("name")}
-					</Link>
-				</div>
+				<Link href={`/admin/orders/view/${row.getValue("id")}`} className="underline">
+					{row.getValue("name")}
+				</Link>
 			);
 		},
 	},
 	{
 		accessorKey: "city",
 		header: () => <div>Address</div>,
-		cell: ({ row }) => <div className="">{row.getValue("city")}-{row.getValue("city")}</div>,
+		cell: ({ row }) => <div className="">{row.getValue("city")} - {row.getValue("country")}</div>,
 	},
 	{
 		accessorKey: "country",
 		header: "Country",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("short_description").slice(0, 50)}...</div>,
-	},	
-    {
+		cell: ({ row }) => <div className="capitalize">{row.getValue("short_description")}</div>,
+	},
+	{
 		accessorKey: "shipping_method",
 		header: "Shipping Method",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("shipping_method").slice(0, 50)}...</div>,
+		cell: ({ row }) => <div className="capitalize">{row.getValue("shipping_method")}</div>,
 	},
 	{
 		accessorKey: "total_value",

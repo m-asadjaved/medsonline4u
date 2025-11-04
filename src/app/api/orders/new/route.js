@@ -1,34 +1,34 @@
-import { Resend } from "resend";
 import { NextResponse } from "next/server";
-import { EmailTemplate } from "@/app/(home)/_components/EmailTemplate";
-const resend = new Resend(process.env.RESEND_KEY);
+import { getPool } from "@/lib/mysql"; // adjust path if needed
+import { SendEmail } from "./SendEmail";
 
 export async function POST(req) {
-    const formData = await req.json();
+    const pool = getPool();
+    let conn;
 
-    const { data, error } = await resend.emails.send({
-        from: 'Medsonline4U <orders@medsonline4u.com>',
-        // to: ['flyquill.pk@gmail.com'],
-        to: ['flyquill.pk@gmail.com', 'rockharoon8200@gmail.com'],
-        subject: 'New Order',
-        react: EmailTemplate({
-            orderId: formData.orderId,
-            email: formData.email,
-            name: formData.name,
-            address: formData.address,
-            phone: formData.phone,
-            city: formData.city,
-            state: formData.state,
-            pincode: formData.pincode,
-            shippingMethod: formData.shippingMethod,
-            total: formData.total,
-            items: formData.items
-        }),
-    });
+    try {
+        const formData = await req.json();
 
-    if (error) {
-        return NextResponse.json(error);
+        const insertProductSql = `
+            INSERT INTO orders (
+                user_id,
+                shipping_method,
+                payment_method,
+                shipping_cost,
+                total_value
+            )
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()
+            );
+            `;
+
+        // const emailSent = await SendEmail(formData);
+
+        return NextResponse.json(formData, { status: 200 });
+        
+    } catch (err) {
+        return NextResponse.json({ error: String(err?.message ?? err) }, { status: 500 });
     }
 
-    return NextResponse.json(data);
+
 }
