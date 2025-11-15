@@ -6,6 +6,21 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const baseUrl = process.env.BASE_URL;
+  const res = await fetch(`${baseUrl}/api/products/${slug}`, { cache: "no-store" });
+  const data = await res.json();
+  const product = data;
+
+  if(data.error) notFound();
+
+  return {
+    title: product.name,
+    description: product.short_description,
+  };
+}
+
 export default async function ProductPage({ params }) {
   const { slug } = await params;
   const baseUrl = process.env.BASE_URL;
@@ -40,7 +55,7 @@ export default async function ProductPage({ params }) {
                   <h1 className="text-2xl font-semibold">{product.name}</h1>
                 </div>
 
-                <ProductActions productId={product.id} variations={product.variations} />
+                <ProductActions productId={product.id} variations={product.variations} product={product} />
 
                 <div className="mt-4 text-sm">
                   <div className="font-bold">Quick Description</div>

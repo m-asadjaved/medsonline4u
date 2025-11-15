@@ -110,7 +110,7 @@ export default function CheckoutPage() {
       })),
     };
 
-    console.log("🚀 Sending Order:", reqBody);
+    // console.log("🚀 Sending Order:", reqBody);
 
     try {
       const res = await fetch(`/api/orders/new`, {
@@ -120,7 +120,22 @@ export default function CheckoutPage() {
       });
 
       const data = await res.json();
-      console.log("✅ Order API Response:", data);
+
+      gtag("event", "purchase", {
+        transaction_id: `ORD-${Date.now()}`,    // REQUIRED
+        value: total,                 // total order value
+        shipping: shippingCost,
+        currency: "USD",
+        items: cartItems.map((it) => ({
+          item_id: it.id,
+          item_name: it.name,
+          variation: it.variation?.name || it.variation,
+          quantity: it.qty,
+          price: it.qty * it.price,
+        }))
+      });
+      
+      // console.log("✅ Order API Response:", data);
 
       if (!res.ok) throw new Error(data.error || "Failed to submit order");
 
